@@ -3,7 +3,7 @@
  * タブのリストを表示するコンポーネント
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, FlatList } from 'react-native';
 import { TabState } from '../../types';
 import { TabItem } from './TabItem';
@@ -19,18 +19,31 @@ export const TabList: React.FC<TabListProps> = ({
   activeTabId,
   onTabPress,
 }) => {
+  const renderItem = useCallback(
+    ({ item }: { item: TabState }) => (
+      <TabItem
+        tab={item}
+        isActive={item.id === activeTabId}
+        onPress={onTabPress}
+      />
+    ),
+    [activeTabId, onTabPress]
+  );
+
+  const keyExtractor = useCallback(
+    (item: TabState) => item.id.toString(),
+    []
+  );
+
   return (
     <View className="w-[20%] bg-app-background">
       <FlatList
         data={tabs}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TabItem
-            tab={item}
-            isActive={item.id === activeTabId}
-            onPress={onTabPress}
-          />
-        )}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={10}
         contentContainerStyle={{ padding: 10 }}
       />
     </View>

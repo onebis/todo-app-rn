@@ -4,6 +4,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isTaskEntityArray, isTabEntityArray } from '../types/guards';
 
 export class Storage {
   /**
@@ -29,7 +30,21 @@ export class Storage {
   static async load<T>(key: string): Promise<T | null> {
     try {
       const jsonValue = await AsyncStorage.getItem(key);
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
+      if (jsonValue == null) return null;
+
+      const parsed = JSON.parse(jsonValue);
+
+      // 型の検証（開発環境のみ）
+      if (__DEV__) {
+        if (key === 'tasks' && !isTaskEntityArray(parsed)) {
+          console.warn('Invalid task data structure');
+        }
+        if (key === 'tabs' && !isTabEntityArray(parsed)) {
+          console.warn('Invalid tab data structure');
+        }
+      }
+
+      return parsed;
     } catch (error) {
       console.error(`Storage load error for key: ${key}`, error);
       throw error;

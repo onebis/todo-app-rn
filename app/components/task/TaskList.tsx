@@ -3,7 +3,7 @@
  * タスクのリストを表示するコンポーネント
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, FlatList, Text } from 'react-native';
 import { TaskState } from '../../types';
 import { TaskItem } from './TaskItem';
@@ -27,6 +27,26 @@ export const TaskList: React.FC<TaskListProps> = ({
   onEndEdit,
   onDelete,
 }) => {
+  const renderItem = useCallback(
+    ({ item }: { item: TaskState }) => (
+      <TaskItem
+        task={item}
+        isEditing={item.id === activeEditId}
+        onToggleDone={onToggleDone}
+        onStartEdit={onStartEdit}
+        onUpdateSubject={onUpdateSubject}
+        onEndEdit={onEndEdit}
+        onDelete={onDelete}
+      />
+    ),
+    [activeEditId, onToggleDone, onStartEdit, onUpdateSubject, onEndEdit, onDelete]
+  );
+
+  const keyExtractor = useCallback(
+    (item: TaskState) => item.id.toString(),
+    []
+  );
+
   if (tasks.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-main-list-bg rounded-task-list">
@@ -38,18 +58,11 @@ export const TaskList: React.FC<TaskListProps> = ({
   return (
     <FlatList
       data={tasks}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <TaskItem
-          task={item}
-          isEditing={item.id === activeEditId}
-          onToggleDone={onToggleDone}
-          onStartEdit={onStartEdit}
-          onUpdateSubject={onUpdateSubject}
-          onEndEdit={onEndEdit}
-          onDelete={onDelete}
-        />
-      )}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      removeClippedSubviews={true}
+      maxToRenderPerBatch={10}
+      windowSize={10}
       className="flex-1 bg-main-list-bg rounded-task-list"
     />
   );

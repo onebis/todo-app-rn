@@ -1,50 +1,139 @@
-# Welcome to your Expo app 👋
+# Todo App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+React Nativeで構築されたタブベースのタスク管理アプリケーション
 
-## Get started
+## 機能
 
-1. Install dependencies
+- タスクの作成・編集・削除
+- タスクの完了/未完了の切り替え
+- タブによるタスクの分類
+- タブのカスタマイズ（名前・カラー・アイコン）
+- タブの並び替え
+- ソフト削除（Undo機能付き）
+- オフライン動作
+- エラーハンドリング（ErrorBoundary）
+- ユーザーフィードバック（Snackbar通知）
+- パフォーマンス最適化
 
-   ```bash
-   npm install
-   ```
+## 技術スタック
 
-2. Start the app
+- **React Native** - クロスプラットフォームモバイルアプリフレームワーク
+- **TypeScript** - 型安全な開発
+- **Expo** - React Native開発プラットフォーム
+- **TailwindCSS (NativeWind)** - ユーティリティファーストCSS
+- **AsyncStorage** - ローカルストレージ
+- **Context API** - グローバル状態管理
 
-   ```bash
-   npx expo start
-   ```
+## アーキテクチャ
 
-In the output, you'll find options to open the app in a
+MVVM（Model-View-ViewModel）パターンを採用
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+app/
+├── types/           # 型定義（Entity, State, など）
+├── repositories/    # データアクセス層（Storage）
+├── viewmodels/      # ビジネスロジック層（TaskListViewModel, TabListViewModel）
+├── contexts/        # グローバル状態管理（AppContext, SnackbarContext）
+├── components/      # UIコンポーネント
+│   ├── common/      # 共通コンポーネント
+│   ├── task/        # タスク関連コンポーネント
+│   └── tab/         # タブ関連コンポーネント
+├── screens/         # 画面コンポーネント
+├── utils/           # ユーティリティ関数
+└── constants/       # 定数定義
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## セットアップ
 
-## Learn more
+### 前提条件
 
-To learn more about developing your project with Expo, look at the following resources:
+- Node.js 16以上
+- npm または yarn
+- iOS: Xcode（Macのみ）
+- Android: Android Studio
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### インストール
 
-## Join the community
+```bash
+# 依存パッケージのインストール
+npm install
 
-Join our community of developers creating universal apps.
+# iOSの場合（Macのみ）
+cd ios && pod install && cd ..
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 起動
+
+```bash
+# 開発サーバーの起動
+npx expo start
+
+# iOSシミュレーターで起動
+npm run ios
+
+# Androidエミュレーターで起動
+npm run android
+
+# Webブラウザで起動
+npm run web
+```
+
+## 主要な機能
+
+### タスク管理
+
+- タスクの追加: FABボタン（+）をタップ
+- タスクの編集: タスクをタップして件名を編集
+- タスクの完了: チェックボックスをタップ
+- タスクの削除: タスクを長押しまたはスワイプ
+- Undo機能: 削除後3秒以内にUndoボタンで復元可能
+
+### タブ管理
+
+- タブ追加: 設定画面（⚙）から「新規タブ」をタップ
+- タブ編集: タブリストでタブをタップして編集
+- タブ削除: タブリストで削除ボタンをタップ
+- カラー選択: 6色のカラーパレットから選択
+- アイコン選択: 絵文字アイコンから選択
+
+### DELETEタブ
+
+- すべての削除済みタスクが自動的に移動
+- ゴミ箱アイコン（🗑）で全削除可能
+- 削除不可・編集不可の特殊タブ
+
+## パフォーマンス最適化
+
+- **useMemo**: 計算結果のメモ化
+- **useCallback**: コールバック関数のメモ化
+- **FlatList最適化**: removeClippedSubviews, maxToRenderPerBatch, windowSize
+- **型ガード**: 開発環境での型検証
+
+## エラーハンドリング
+
+- **ErrorBoundary**: Reactエラーをキャッチして適切に表示
+- **型ガード**: 開発環境でデータ構造を検証
+- **エラーメッセージ**: ユーザーフレンドリーなエラー表示
+
+## 開発
+
+### TypeScriptコンパイルチェック
+
+```bash
+npx tsc --noEmit
+```
+
+### コード構造
+
+- **Entity**: データベースモデル（TaskEntity, TabEntity）
+- **State**: UI状態（TaskState, TabState）
+- **ViewModel**: ビジネスロジック
+- **Repository**: データ永続化
+
+## ライセンス
+
+MIT
+
+## 作成者
+
+React Native + TypeScript + TailwindCSSで構築された、モダンなタスク管理アプリケーション

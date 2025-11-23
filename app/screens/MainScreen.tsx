@@ -3,7 +3,7 @@
  * アプリのメイン画面
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 import { TaskList } from '../components/task';
 import { TabList } from '../components/tab';
+import { Snackbar } from '../components/common';
 import { useAppContext } from '../contexts';
-import { DELETE_TAB_ID, SHADOW } from '../constants';
+import { useSnackbar } from '../contexts/SnackbarContext';
+import { DELETE_TAB_ID, SHADOW, SUCCESS_MESSAGES } from '../constants';
 
 interface MainScreenProps {
   onNavigateToTabList?: () => void;
@@ -22,6 +24,13 @@ interface MainScreenProps {
 
 export const MainScreen: React.FC<MainScreenProps> = ({ onNavigateToTabList }) => {
   const { taskList, tabList, appState } = useAppContext();
+  const { showSnackbar, hideSnackbar, snackbarConfig, visible } = useSnackbar();
+
+  // メモ化された値
+  const isDeleteTab = useMemo(
+    () => appState.state.activeTabId === DELETE_TAB_ID,
+    [appState.state.activeTabId]
+  );
 
   // 画面初期化
   useEffect(() => {
@@ -49,51 +58,63 @@ export const MainScreen: React.FC<MainScreenProps> = ({ onNavigateToTabList }) =
   }, [appState.state.activeTabId]);
 
   // タスク追加
-  const handleAddTask = async () => {
+  const handleAddTask = useCallback(async () => {
     try {
       const newTaskId = await taskList.createTask(appState.state.activeTabId);
       appState.setActiveEditId(newTaskId);
     } catch (error) {
       console.error('Failed to add task:', error);
     }
-  };
+  }, [taskList, appState]);
 
   // ゴミ箱を空にする
-  const handleEmptyTrash = async () => {
+  const handleEmptyTrash = useCallback(async () => {
     await taskList.deleteAllTasksInTrash();
-  };
+  }, [taskList]);
 
   // タスク完了トグル
-  const handleToggleDone = async (taskId: number) => {
+  const handleToggleDone = useCallback(async (taskId: number) => {
     await taskList.toggleTaskDone(taskId, appState.state.activeTabId);
-  };
+  }, [taskList, appState.state.activeTabId]);
 
   // タスク編集開始
-  const handleStartEdit = (taskId: number) => {
+  const handleStartEdit = useCallback((taskId: number) => {
     appState.setActiveEditId(taskId);
-  };
+  }, [appState]);
 
   // タスク件名更新
-  const handleUpdateSubject = async (taskId: number, subject: string) => {
+  const handleUpdateSubject = useCallback(async (taskId: number, subject: string) => {
     await taskList.updateTaskSubject(taskId, subject);
-  };
+  }, [taskList]);
 
   // タスク編集終了
-  const handleEndEdit = async () => {
+  const handleEndEdit = useCallback(async () => {
     appState.exitEditMode();
     // 編集終了後にタスクリストを再取得
     await taskList.fetchTasksByTabId(appState.state.activeTabId);
-  };
+  }, [appState, taskList]);
 
   // タスク削除
-  const handleDeleteTask = async (taskId: number) => {
-    await taskList.softDeleteTask(taskId, appState.state.activeTabId);
-  };
+  const handleDeleteTask = useCallback(async (taskId: number) => {
+    const originalTabId = appState.state.activeTabId;
+    await taskList.softDeleteTask(taskId, originalTabId);
+
+    showSnackbar({
+      message: SUCCESS_MESSAGES.TASK_DELETED,
+      action: {
+        label: 'Undo',
+        onPress: async () => {
+          await taskList.undoSoftDelete(taskId, originalTabId, appState.state.activeTabId);
+          hideSnackbar();
+        },
+      },
+    });
+  }, [taskList, appState, showSnackbar, hideSnackbar]);
 
   // タブ選択
-  const handleTabPress = (tabId: number) => {
+  const handleTabPress = useCallback((tabId: number) => {
     appState.setActiveTabId(tabId);
-  };
+  }, [appState]);
 
   // ローディング状態
   if (taskList.state.isLoading || tabList.state.isLoading) {
@@ -105,8 +126,6 @@ export const MainScreen: React.FC<MainScreenProps> = ({ onNavigateToTabList }) =
       </SafeAreaView>
     );
   }
-
-  const isDeleteTab = appState.state.activeTabId === DELETE_TAB_ID;
 
   return (
     <SafeAreaView className="flex-1 bg-app-background">
@@ -154,6 +173,15 @@ export const MainScreen: React.FC<MainScreenProps> = ({ onNavigateToTabList }) =
           {isDeleteTab ? '🗑' : '+'}
         </Text>
       </TouchableOpacity>
+
+      {/* Snackbar */}
+      <Snackbar
+        visible={visible}
+        message={snackbarConfig?.message || ''}
+        duration={snackbarConfig?.duration}
+        onDismiss={hideSnackbar}
+        action={snackbarConfig?.action}
+      />
     </SafeAreaView>
   );
 };
