@@ -11,6 +11,7 @@ interface IconComponentProps {
   icon: IconType;
   size?: number;
   color?: string;
+  className?: string;
 }
 
 // アイコン名からマッピング（簡易実装）
@@ -41,11 +42,12 @@ export const IconComponent: React.FC<IconComponentProps> = ({
   icon,
   size = 24,
   color = '#000000',
+  className = '',
 }) => {
   const iconText = ICON_MAP[icon] || '●';
 
   return (
-    <Text style={{ fontSize: size, color }}>
+    <Text className={className} style={{ fontSize: size, color }}>
       {iconText}
     </Text>
   );

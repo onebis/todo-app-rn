@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { TabState } from '../../types';
 import { TabItem } from './TabItem';
 
@@ -20,7 +20,7 @@ export const TabList: React.FC<TabListProps> = ({
   onTabPress,
 }) => {
   return (
-    <View style={styles.container}>
+    <View className="w-[20%] bg-app-background">
       <FlatList
         data={tabs}
         keyExtractor={(item) => item.id.toString()}
@@ -31,18 +31,8 @@ export const TabList: React.FC<TabListProps> = ({
             onPress={onTabPress}
           />
         )}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={{ padding: 10 }}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '20%',
-    backgroundColor: '#E0E0E0',
-  },
-  listContent: {
-    padding: 10,
-  },
-});

@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { TaskState } from '../../types';
 
 interface TaskItemProps {
@@ -43,22 +43,22 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-row items-center p-sm bg-white border-b border-border-bottom">
       {/* チェックボックス */}
       <TouchableOpacity
         onPress={() => onToggleDone(task.id)}
-        style={styles.checkbox}
+        className="w-[30px] h-[30px] justify-center items-center mr-sm"
       >
-        <Text style={styles.checkboxIcon}>
+        <Text className="text-2xl text-blue-500">
           {task.done ? '☑' : '☐'}
         </Text>
       </TouchableOpacity>
 
       {/* タスク件名 */}
-      <View style={styles.contentContainer}>
+      <View className="flex-1">
         {isEditing ? (
           <TextInput
-            style={styles.input}
+            className="text-body-large text-black border border-blue-500 rounded p-[5px]"
             value={localSubject}
             onChangeText={handleSubjectChange}
             onSubmitEditing={handleSubmit}
@@ -68,13 +68,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         ) : (
           <TouchableOpacity
             onPress={() => onStartEdit(task.id)}
-            style={styles.textContainer}
+            className="py-[5px]"
           >
             <Text
-              style={[
-                styles.text,
-                task.done && styles.textDone,
-              ]}
+              className={`text-body-large ${task.done ? 'text-task-done line-through' : 'text-black'}`}
               numberOfLines={1}
             >
               {task.subject || '(空のタスク)'}
@@ -86,64 +83,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       {/* 削除ボタン（スワイプ代替） */}
       <TouchableOpacity
         onPress={() => onDelete(task.id)}
-        style={styles.deleteButton}
+        className="w-[30px] h-[30px] justify-center items-center ml-sm"
       >
-        <Text style={styles.deleteIcon}>🗑</Text>
+        <Text className="text-xl">🗑</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  checkbox: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  checkboxIcon: {
-    fontSize: 24,
-    color: '#2196F3',
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  textContainer: {
-    paddingVertical: 5,
-  },
-  text: {
-    fontSize: 16,
-    color: '#000000',
-  },
-  textDone: {
-    color: '#757575',
-    textDecorationLine: 'line-through',
-  },
-  input: {
-    fontSize: 16,
-    color: '#000000',
-    borderWidth: 1,
-    borderColor: '#2196F3',
-    borderRadius: 4,
-    padding: 5,
-  },
-  deleteButton: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 10,
-  },
-  deleteIcon: {
-    fontSize: 20,
-  },
-});

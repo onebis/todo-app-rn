@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View, FlatList, StyleSheet, Text } from 'react-native';
+import { View, FlatList, Text } from 'react-native';
 import { TaskState } from '../../types';
 import { TaskItem } from './TaskItem';
 
@@ -29,8 +29,8 @@ export const TaskList: React.FC<TaskListProps> = ({
 }) => {
   if (tasks.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>タスクがありません</Text>
+      <View className="flex-1 justify-center items-center bg-main-list-bg rounded-task-list">
+        <Text className="text-body-large text-disabled">タスクがありません</Text>
       </View>
     );
   }
@@ -50,26 +50,7 @@ export const TaskList: React.FC<TaskListProps> = ({
           onDelete={onDelete}
         />
       )}
-      style={styles.list}
+      className="flex-1 bg-main-list-bg rounded-task-list"
     />
   );
 };
-
-const styles = StyleSheet.create({
-  list: {
-    flex: 1,
-    backgroundColor: '#F2F2F2',
-    borderRadius: 10,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F2F2F2',
-    borderRadius: 10,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#BDBDBD',
-  },
-});

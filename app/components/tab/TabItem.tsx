@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 import { TabState } from '../../types';
 import { IconComponent, ColorIndicator } from '../common';
 
@@ -22,17 +22,16 @@ export const TabItem: React.FC<TabItemProps> = ({
   return (
     <TouchableOpacity
       onPress={() => onPress(tab.id)}
-      style={[
-        styles.container,
-        isActive && styles.containerActive,
-      ]}
+      className={`h-[70px] py-sm px-4 mb-sm justify-center rounded-r-tab ${
+        isActive ? 'bg-active-tab' : 'bg-inactive-tab'
+      }`}
     >
-      <View style={styles.content}>
+      <View className="flex-row items-center gap-2">
         {/* カラーインジケーター */}
         <ColorIndicator color={tab.color as any} size={12} />
 
         {/* タブ名 */}
-        <Text style={styles.title} numberOfLines={1}>
+        <Text className="flex-1 text-body-medium font-medium text-black" numberOfLines={1}>
           {tab.title}
         </Text>
 
@@ -42,30 +41,3 @@ export const TabItem: React.FC<TabItemProps> = ({
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    height: 70,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: '#BDBDBD',
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5,
-    marginBottom: 10,
-    justifyContent: 'center',
-  },
-  containerActive: {
-    backgroundColor: '#F2F2F2',
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  title: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#000000',
-  },
-});

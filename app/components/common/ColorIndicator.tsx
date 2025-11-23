@@ -10,6 +10,7 @@ import { ColorType } from '../../constants/app';
 interface ColorIndicatorProps {
   color: ColorType;
   size?: number;
+  className?: string;
 }
 
 // カラー名からHexコードへのマッピング
@@ -38,15 +39,16 @@ const COLOR_MAP: Record<ColorType, string> = {
 export const ColorIndicator: React.FC<ColorIndicatorProps> = ({
   color,
   size = 30,
+  className = '',
 }) => {
   const hexColor = COLOR_MAP[color] || COLOR_MAP.blue;
 
   return (
     <View
+      className={`rounded-full ${className}`}
       style={{
         width: size,
         height: size,
-        borderRadius: size / 2,
         backgroundColor: hexColor,
       }}
     />

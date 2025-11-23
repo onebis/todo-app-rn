@@ -6,7 +6,6 @@
 import React, { useEffect } from 'react';
 import {
   View,
-  StyleSheet,
   TouchableOpacity,
   Text,
   SafeAreaView,
@@ -15,7 +14,7 @@ import {
 import { TaskList } from '../components/task';
 import { TabList } from '../components/tab';
 import { useAppContext } from '../contexts';
-import { DELETE_TAB_ID } from '../constants/app';
+import { DELETE_TAB_ID, SHADOW } from '../constants';
 
 export const MainScreen: React.FC = () => {
   const { taskList, tabList, appState } = useAppContext();
@@ -95,8 +94,8 @@ export const MainScreen: React.FC = () => {
   // ローディング状態
   if (taskList.state.isLoading || tabList.state.isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
+      <SafeAreaView className="flex-1 bg-app-background">
+        <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#9C27B0" />
         </View>
       </SafeAreaView>
@@ -106,19 +105,19 @@ export const MainScreen: React.FC = () => {
   const isDeleteTab = appState.state.activeTabId === DELETE_TAB_ID;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-app-background">
       {/* ヘッダー */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Todo App</Text>
-        <TouchableOpacity style={styles.headerButton}>
-          <Text style={styles.headerButtonText}>⚙</Text>
+      <View className="h-[60px] flex-row justify-between items-center px-md bg-white">
+        <Text className="text-xl font-bold text-black">Todo App</Text>
+        <TouchableOpacity className="w-10 h-10 justify-center items-center">
+          <Text className="text-2xl">⚙</Text>
         </TouchableOpacity>
       </View>
 
       {/* メインコンテンツ */}
-      <View style={styles.content}>
+      <View className="flex-1 flex-row p-sm">
         {/* タスクリスト */}
-        <View style={styles.taskListContainer}>
+        <View className="flex-1 mr-sm">
           <TaskList
             tasks={taskList.state.taskList}
             activeEditId={appState.state.activeEditId}
@@ -140,77 +139,14 @@ export const MainScreen: React.FC = () => {
 
       {/* FAB */}
       <TouchableOpacity
-        style={styles.fab}
+        className="absolute bottom-5 left-1/2 -ml-7 w-14 h-14 rounded-full bg-blue-500 justify-center items-center"
+        style={SHADOW.fab}
         onPress={isDeleteTab ? handleEmptyTrash : handleAddTask}
       >
-        <Text style={styles.fabIcon}>
+        <Text className="text-3xl text-white">
           {isDeleteTab ? '🗑' : '+'}
         </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E0E0E0',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    height: 60,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#FFFFFF',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000000',
-  },
-  headerButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerButtonText: {
-    fontSize: 24,
-  },
-  content: {
-    flex: 1,
-    flexDirection: 'row',
-    padding: 10,
-  },
-  taskListContainer: {
-    flex: 1,
-    marginRight: 10,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 20,
-    left: '50%',
-    marginLeft: -28,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#2196F3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  fabIcon: {
-    fontSize: 32,
-    color: '#FFFFFF',
-  },
-});
