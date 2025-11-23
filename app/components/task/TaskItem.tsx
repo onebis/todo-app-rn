@@ -3,7 +3,7 @@
  * 個別のタスクを表示・編集するコンポーネント
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { TaskState } from '../../types';
 
@@ -27,6 +27,11 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   onDelete,
 }) => {
   const [localSubject, setLocalSubject] = useState(task.subject);
+
+  // task.subject が変更されたら localSubject を同期
+  useEffect(() => {
+    setLocalSubject(task.subject);
+  }, [task.subject]);
 
   const handleSubjectChange = (text: string) => {
     setLocalSubject(text);

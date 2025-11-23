@@ -25,17 +25,18 @@ export const MainScreen: React.FC = () => {
     const initialize = async () => {
       await tabList.initializeDefaultTabs();
       await tabList.fetchAllTabs();
-
-      // 最初のタブをアクティブにする
-      if (tabList.state.tabList.length > 0) {
-        const firstTab = tabList.state.tabList[0];
-        appState.setActiveTabId(firstTab.id);
-        await taskList.fetchTasksByTabId(firstTab.id);
-      }
     };
 
     initialize();
   }, []);
+
+  // タブリストが読み込まれたら最初のタブをアクティブにする
+  useEffect(() => {
+    if (tabList.state.tabList.length > 0 && appState.state.activeTabId === 0) {
+      const firstTab = tabList.state.tabList[0];
+      appState.setActiveTabId(firstTab.id);
+    }
+  }, [tabList.state.tabList.length]);
 
   // タブ切り替え時にタスクを再取得
   useEffect(() => {
@@ -75,8 +76,10 @@ export const MainScreen: React.FC = () => {
   };
 
   // タスク編集終了
-  const handleEndEdit = () => {
+  const handleEndEdit = async () => {
     appState.exitEditMode();
+    // 編集終了後にタスクリストを再取得
+    await taskList.fetchTasksByTabId(appState.state.activeTabId);
   };
 
   // タスク削除
