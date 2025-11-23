@@ -16,7 +16,11 @@ import { TabList } from '../components/tab';
 import { useAppContext } from '../contexts';
 import { DELETE_TAB_ID, SHADOW } from '../constants';
 
-export const MainScreen: React.FC = () => {
+interface MainScreenProps {
+  onNavigateToTabList?: () => void;
+}
+
+export const MainScreen: React.FC<MainScreenProps> = ({ onNavigateToTabList }) => {
   const { taskList, tabList, appState } = useAppContext();
 
   // 画面初期化
@@ -109,7 +113,10 @@ export const MainScreen: React.FC = () => {
       {/* ヘッダー */}
       <View className="h-[60px] flex-row justify-between items-center px-md bg-white">
         <Text className="text-xl font-bold text-black">Todo App</Text>
-        <TouchableOpacity className="w-10 h-10 justify-center items-center">
+        <TouchableOpacity
+          className="w-10 h-10 justify-center items-center"
+          onPress={onNavigateToTabList}
+        >
           <Text className="text-2xl">⚙</Text>
         </TouchableOpacity>
       </View>
