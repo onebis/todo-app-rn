@@ -9,9 +9,9 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  SafeAreaView,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppContext } from '../contexts';
 import { ColorIndicator, IconComponent } from '../components/common';
 import { DELETE_TAB_ID, SHADOW } from '../constants';

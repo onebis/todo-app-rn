@@ -9,9 +9,9 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppContext } from '../contexts';
 import { ColorIndicator, IconComponent, ColorPickerModal, IconPickerModal } from '../components/common';
 import { ColorType, IconType } from '../constants/app';

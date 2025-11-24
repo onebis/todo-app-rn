@@ -8,9 +8,9 @@ import {
   View,
   TouchableOpacity,
   Text,
-  SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { TaskList } from '../components/task';
 import { TabList } from '../components/tab';
 import { Snackbar } from '../components/common';
