@@ -3,9 +3,9 @@
  * アイコン表示用の共通コンポーネント
  */
 
-import React from 'react';
+import type React from 'react';
 import { Text } from 'react-native';
-import { IconType } from '../../constants/app';
+import type { IconType } from '../../constants/app';
 
 interface IconComponentProps {
   icon: IconType;

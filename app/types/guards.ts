@@ -3,7 +3,7 @@
  * 型ガード関数
  */
 
-import { TaskEntity, TabEntity } from './entities';
+import type { TabEntity, TaskEntity } from './entities';
 
 /**
  * TaskEntityの型ガード

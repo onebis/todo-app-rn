@@ -3,7 +3,8 @@
  * Snackbar管理用Context
  */
 
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import type React from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useState } from 'react';
 
 interface SnackbarConfig {
   message: string;
@@ -44,11 +45,7 @@ export const SnackbarProvider: React.FC<{ children: ReactNode }> = ({ children }
     visible,
   };
 
-  return (
-    <SnackbarContext.Provider value={value}>
-      {children}
-    </SnackbarContext.Provider>
-  );
+  return <SnackbarContext.Provider value={value}>{children}</SnackbarContext.Provider>;
 };
 
 export const useSnackbar = (): SnackbarContextType => {

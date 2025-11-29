@@ -3,33 +3,27 @@
  * アプリのメイン画面
  */
 
-import React, { useEffect, useMemo, useCallback } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type React from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { TaskList } from '@/app/components/task';
-import { TabList } from '@/app/components/tab';
 import { Snackbar } from '@/app/components/common';
+import { TabList } from '@/app/components/tab';
+import { TaskList } from '@/app/components/task';
+import { DELETE_TAB_ID, SHADOW, SUCCESS_MESSAGES } from '@/app/constants';
 import { useAppContext } from '@/app/contexts';
 import { useSnackbar } from '@/app/contexts/SnackbarContext';
-import { DELETE_TAB_ID, SHADOW, SUCCESS_MESSAGES } from '@/app/constants';
-import {useNavigation} from "@react-navigation/native";
 
 // interface MainScreenProps {
 //   onNavigateToTabList?: () => void;
 // }
 
-
 export const MainScreen: React.FC = () => {
-
-    const navigation = useNavigation();
-    const onNavigateToTabList = () => {
-        navigation.navigate("Settings" as never);
-    }
+  const navigation = useNavigation();
+  const onNavigateToTabList = () => {
+    navigation.navigate('Settings' as never);
+  };
   const { taskList, tabList, appState } = useAppContext();
   const { showSnackbar, hideSnackbar, snackbarConfig, visible } = useSnackbar();
 
@@ -80,19 +74,28 @@ export const MainScreen: React.FC = () => {
   }, [taskList]);
 
   // タスク完了トグル
-  const handleToggleDone = useCallback(async (taskId: number) => {
-    await taskList.toggleTaskDone(taskId, appState.state.activeTabId);
-  }, [taskList, appState.state.activeTabId]);
+  const handleToggleDone = useCallback(
+    async (taskId: number) => {
+      await taskList.toggleTaskDone(taskId, appState.state.activeTabId);
+    },
+    [taskList, appState.state.activeTabId]
+  );
 
   // タスク編集開始
-  const handleStartEdit = useCallback((taskId: number) => {
-    appState.setActiveEditId(taskId);
-  }, [appState]);
+  const handleStartEdit = useCallback(
+    (taskId: number) => {
+      appState.setActiveEditId(taskId);
+    },
+    [appState]
+  );
 
   // タスク件名更新
-  const handleUpdateSubject = useCallback(async (taskId: number, subject: string) => {
-    await taskList.updateTaskSubject(taskId, subject);
-  }, [taskList]);
+  const handleUpdateSubject = useCallback(
+    async (taskId: number, subject: string) => {
+      await taskList.updateTaskSubject(taskId, subject);
+    },
+    [taskList]
+  );
 
   // タスク編集終了
   const handleEndEdit = useCallback(async () => {
@@ -102,26 +105,32 @@ export const MainScreen: React.FC = () => {
   }, [appState, taskList]);
 
   // タスク削除
-  const handleDeleteTask = useCallback(async (taskId: number) => {
-    const originalTabId = appState.state.activeTabId;
-    await taskList.softDeleteTask(taskId, originalTabId);
+  const handleDeleteTask = useCallback(
+    async (taskId: number) => {
+      const originalTabId = appState.state.activeTabId;
+      await taskList.softDeleteTask(taskId, originalTabId);
 
-    showSnackbar({
-      message: SUCCESS_MESSAGES.TASK_DELETED,
-      action: {
-        label: 'Undo',
-        onPress: async () => {
-          await taskList.undoSoftDelete(taskId, originalTabId, appState.state.activeTabId);
-          hideSnackbar();
+      showSnackbar({
+        message: SUCCESS_MESSAGES.TASK_DELETED,
+        action: {
+          label: 'Undo',
+          onPress: async () => {
+            await taskList.undoSoftDelete(taskId, originalTabId, appState.state.activeTabId);
+            hideSnackbar();
+          },
         },
-      },
-    });
-  }, [taskList, appState, showSnackbar, hideSnackbar]);
+      });
+    },
+    [taskList, appState, showSnackbar, hideSnackbar]
+  );
 
   // タブ選択
-  const handleTabPress = useCallback((tabId: number) => {
-    appState.setActiveTabId(tabId);
-  }, [appState]);
+  const handleTabPress = useCallback(
+    (tabId: number) => {
+      appState.setActiveTabId(tabId);
+    },
+    [appState]
+  );
 
   // ローディング状態
   if (taskList.state.isLoading || tabList.state.isLoading) {
@@ -176,9 +185,7 @@ export const MainScreen: React.FC = () => {
         style={SHADOW.fab}
         onPress={isDeleteTab ? handleEmptyTrash : handleAddTask}
       >
-        <Text className="text-3xl text-white">
-          {isDeleteTab ? '🗑' : '+'}
-        </Text>
+        <Text className="text-3xl text-white">{isDeleteTab ? '🗑' : '+'}</Text>
       </TouchableOpacity>
 
       {/* Snackbar */}

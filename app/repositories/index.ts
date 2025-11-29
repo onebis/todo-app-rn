@@ -3,5 +3,5 @@
  */
 
 export { Storage } from './storage';
-export { TaskRepository } from './TaskRepository';
 export { TabRepository } from './TabRepository';
+export { TaskRepository } from './TaskRepository';

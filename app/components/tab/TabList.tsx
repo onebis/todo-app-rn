@@ -3,9 +3,10 @@
  * タブのリストを表示するコンポーネント
  */
 
-import React, { useCallback } from 'react';
-import { View, FlatList } from 'react-native';
-import { TabState } from '../../types';
+import type React from 'react';
+import { useCallback } from 'react';
+import { FlatList, View } from 'react-native';
+import type { TabState } from '../../types';
 import { TabItem } from './TabItem';
 
 interface TabListProps {
@@ -14,26 +15,15 @@ interface TabListProps {
   onTabPress: (tabId: number) => void;
 }
 
-export const TabList: React.FC<TabListProps> = ({
-  tabs,
-  activeTabId,
-  onTabPress,
-}) => {
+export const TabList: React.FC<TabListProps> = ({ tabs, activeTabId, onTabPress }) => {
   const renderItem = useCallback(
     ({ item }: { item: TabState }) => (
-      <TabItem
-        tab={item}
-        isActive={item.id === activeTabId}
-        onPress={onTabPress}
-      />
+      <TabItem tab={item} isActive={item.id === activeTabId} onPress={onTabPress} />
     ),
     [activeTabId, onTabPress]
   );
 
-  const keyExtractor = useCallback(
-    (item: TabState) => item.id.toString(),
-    []
-  );
+  const keyExtractor = useCallback((item: TabState) => item.id.toString(), []);
 
   return (
     <View className="w-[20%] bg-app-background">

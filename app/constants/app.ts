@@ -34,7 +34,7 @@ export const COLOR_LIST = [
   'blueGrey',
 ] as const;
 
-export type ColorType = typeof COLOR_LIST[number];
+export type ColorType = (typeof COLOR_LIST)[number];
 
 // アイコンリスト (仕様書セクション4.2.3参照)
 export const ICON_LIST = [
@@ -60,7 +60,7 @@ export const ICON_LIST = [
   'code',
 ] as const;
 
-export type IconType = typeof ICON_LIST[number];
+export type IconType = (typeof ICON_LIST)[number];
 
 // デフォルトタブ設定
 export const DEFAULT_TABS = [

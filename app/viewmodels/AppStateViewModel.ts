@@ -3,9 +3,9 @@
  * アプリ全体の状態とビジネスロジックを管理
  */
 
-import { useState, useCallback } from 'react';
-import { AppState } from '../types';
+import { useCallback, useState } from 'react';
 import { DEFAULT_TAB_ID } from '../constants/app';
+import type { AppState } from '../types';
 
 export const useAppStateViewModel = () => {
   const [state, setState] = useState<AppState>({

@@ -3,18 +3,18 @@
  * タブ作成・編集画面
  */
 
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ColorIndicator,
+  ColorPickerModal,
+  IconComponent,
+  IconPickerModal,
+} from '../components/common';
+import type { ColorType, IconType } from '../constants/app';
 import { useAppContext } from '../contexts';
-import { ColorIndicator, IconComponent, ColorPickerModal, IconPickerModal } from '../components/common';
-import { ColorType, IconType } from '../constants/app';
 
 interface EditTabScreenProps {
   mode: 'create' | 'edit';
@@ -22,11 +22,7 @@ interface EditTabScreenProps {
   onClose: () => void;
 }
 
-export const EditTabScreen: React.FC<EditTabScreenProps> = ({
-  mode,
-  tabId,
-  onClose,
-}) => {
+export const EditTabScreen: React.FC<EditTabScreenProps> = ({ mode, tabId, onClose }) => {
   const { tabList, editTabState } = useAppContext();
 
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -80,10 +76,7 @@ export const EditTabScreen: React.FC<EditTabScreenProps> = ({
     <SafeAreaView className="flex-1 bg-app-background">
       {/* ヘッダー */}
       <View className="h-[60px] flex-row items-center px-md bg-white">
-        <TouchableOpacity
-          onPress={onClose}
-          className="w-10 h-10 justify-center items-center"
-        >
+        <TouchableOpacity onPress={onClose} className="w-10 h-10 justify-center items-center">
           <Text className="text-2xl text-black">✕</Text>
         </TouchableOpacity>
         <Text className="flex-1 text-xl font-bold text-black text-center mr-10">
@@ -96,9 +89,7 @@ export const EditTabScreen: React.FC<EditTabScreenProps> = ({
         <View className="bg-white rounded-main p-xl">
           {/* タブ名入力 */}
           <View className="mb-lg">
-            <Text className="text-body-medium font-medium text-black mb-2">
-              タブ名
-            </Text>
+            <Text className="text-body-medium font-medium text-black mb-2">タブ名</Text>
             <TextInput
               className="border border-gray-300 rounded px-4 py-3 text-body-large text-black"
               value={editTabState.state.editTabTitle}
@@ -115,47 +106,30 @@ export const EditTabScreen: React.FC<EditTabScreenProps> = ({
 
           {/* カラー選択 */}
           <View className="mb-lg">
-            <Text className="text-body-medium font-medium text-black mb-2">
-              カラー
-            </Text>
+            <Text className="text-body-medium font-medium text-black mb-2">カラー</Text>
             <TouchableOpacity
               onPress={() => setShowColorPicker(true)}
               className="border border-gray-300 rounded px-4 py-3 flex-row items-center"
             >
-              <ColorIndicator
-                color={editTabState.state.editTabColor as ColorType}
-                size={30}
-              />
-              <Text className="ml-3 text-body-large text-black">
-                カラーを選択
-              </Text>
+              <ColorIndicator color={editTabState.state.editTabColor as ColorType} size={30} />
+              <Text className="ml-3 text-body-large text-black">カラーを選択</Text>
             </TouchableOpacity>
           </View>
 
           {/* アイコン選択 */}
           <View className="mb-xl">
-            <Text className="text-body-medium font-medium text-black mb-2">
-              アイコン
-            </Text>
+            <Text className="text-body-medium font-medium text-black mb-2">アイコン</Text>
             <TouchableOpacity
               onPress={() => setShowIconPicker(true)}
               className="border border-gray-300 rounded px-4 py-3 flex-row items-center"
             >
-              <IconComponent
-                icon={editTabState.state.editTabIcon as IconType}
-                size={30}
-              />
-              <Text className="ml-3 text-body-large text-black">
-                アイコンを選択
-              </Text>
+              <IconComponent icon={editTabState.state.editTabIcon as IconType} size={30} />
+              <Text className="ml-3 text-body-large text-black">アイコンを選択</Text>
             </TouchableOpacity>
           </View>
 
           {/* 保存ボタン */}
-          <TouchableOpacity
-            onPress={handleSave}
-            className="bg-blue-500 rounded py-4 items-center"
-          >
+          <TouchableOpacity onPress={handleSave} className="bg-blue-500 rounded py-4 items-center">
             <Text className="text-button font-medium text-white">
               {mode === 'create' ? '新規作成' : '確定'}
             </Text>

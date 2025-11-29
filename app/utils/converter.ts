@@ -2,7 +2,7 @@
  * エンティティと状態の変換関数
  */
 
-import { TaskEntity, TabEntity, TaskState, TabState } from '../types';
+import type { TabEntity, TabState, TaskEntity, TaskState } from '../types';
 import { timestampToISO } from './date';
 
 /**

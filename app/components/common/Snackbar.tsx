@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { Animated, Text, TouchableOpacity, View } from 'react-native';
 
 interface SnackbarProps {
   visible: boolean;

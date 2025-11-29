@@ -3,19 +3,20 @@
  * タブ作成・編集画面
  */
 
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ColorIndicator,
+  ColorPickerModal,
+  IconComponent,
+  IconPickerModal,
+} from '@/app/components/common';
+import type { ColorType, IconType } from '@/app/constants/app';
 import { useAppContext } from '@/app/contexts';
-import { ColorIndicator, IconComponent, ColorPickerModal, IconPickerModal } from '@/app/components/common';
-import { ColorType, IconType } from '@/app/constants/app';
-import {useNavigation} from "@react-navigation/native";
+import Header from '@/components/layout/Header';
 
 interface EditTabScreenProps {
   mode: 'create' | 'edit';
@@ -24,10 +25,10 @@ interface EditTabScreenProps {
 }
 
 export const EditTabScreen: React.FC = () => {
-    const navigation = useNavigation();
-    const onClose = () => {
-        navigation.navigate("Home" as never);
-    }
+  const navigation = useNavigation();
+  const onClose = () => {
+    navigation.navigate('Home' as never);
+  };
 
   const { tabList, editTabState } = useAppContext();
 
@@ -81,17 +82,18 @@ export const EditTabScreen: React.FC = () => {
   return (
     <SafeAreaView className="flex-1 bg-app-background">
       {/* ヘッダー */}
-      <View className="h-[60px] flex-row items-center px-md bg-white">
-        <TouchableOpacity
-          onPress={onClose}
-          className="w-10 h-10 justify-center items-center"
-        >
-          <Text className="text-2xl text-black">✕</Text>
-        </TouchableOpacity>
-        <Text className="flex-1 text-xl font-bold text-black text-center mr-10">
-          {/*{mode === 'create' ? 'タブを作成' : 'タブを編集'}*/}
-        </Text>
-      </View>
+      <Header title={'タブ設定'} />
+      {/*<View className="h-[60px] flex-row items-center px-md bg-white">*/}
+      {/*  <TouchableOpacity*/}
+      {/*    onPress={onClose}*/}
+      {/*    className="w-10 h-10 justify-center items-center"*/}
+      {/*  >*/}
+      {/*    <Text className="text-2xl text-black">✕</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*  <Text className="flex-1 text-xl font-bold text-black text-center mr-10">*/}
+      {/*    /!*{mode === 'create' ? 'タブを作成' : 'タブを編集'}*!/*/}
+      {/*  </Text>*/}
+      {/*</View>*/}
 
       {/*/!* フォーム *!/*/}
       {/*<View className="flex-1 p-xl">*/}

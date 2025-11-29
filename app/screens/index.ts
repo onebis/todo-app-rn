@@ -2,6 +2,6 @@
  * 画面コンポーネントのエクスポート
  */
 
-export { MainScreen } from './MainScreen';
 export { EditTabScreen } from './EditTabScreen';
+export { MainScreen } from './MainScreen';
 export { TabListScreen } from './TabListScreen';

@@ -3,9 +3,10 @@
  * タスクのリストを表示するコンポーネント
  */
 
-import React, { useCallback } from 'react';
-import { View, FlatList, Text } from 'react-native';
-import { TaskState } from '../../types';
+import type React from 'react';
+import { useCallback } from 'react';
+import { FlatList, Text, View } from 'react-native';
+import type { TaskState } from '../../types';
 import { TaskItem } from './TaskItem';
 
 interface TaskListProps {
@@ -42,10 +43,7 @@ export const TaskList: React.FC<TaskListProps> = ({
     [activeEditId, onToggleDone, onStartEdit, onUpdateSubject, onEndEdit, onDelete]
   );
 
-  const keyExtractor = useCallback(
-    (item: TaskState) => item.id.toString(),
-    []
-  );
+  const keyExtractor = useCallback((item: TaskState) => item.id.toString(), []);
 
   if (tasks.length === 0) {
     return (

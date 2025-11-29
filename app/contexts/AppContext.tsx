@@ -3,12 +3,13 @@
  * アプリケーション全体の状態を提供するContext
  */
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import type React from 'react';
+import { createContext, type ReactNode, useContext } from 'react';
 import {
-  useTaskListViewModel,
-  useTabListViewModel,
   useAppStateViewModel,
   useEditTabStateViewModel,
+  useTabListViewModel,
+  useTaskListViewModel,
 } from '../viewmodels';
 
 // Context型定義

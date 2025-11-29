@@ -3,11 +3,11 @@
  * アイコン選択モーダル
  */
 
-import React from 'react';
-import { View, TouchableOpacity, FlatList } from 'react-native';
-import { Modal } from './Modal';
+import type React from 'react';
+import { FlatList, TouchableOpacity, View } from 'react-native';
+import { ICON_LIST, type IconType } from '../../constants/app';
 import { IconComponent } from './IconComponent';
-import { ICON_LIST, IconType } from '../../constants/app';
+import { Modal } from './Modal';
 
 interface IconPickerModalProps {
   visible: boolean;
@@ -34,13 +34,10 @@ export const IconPickerModal: React.FC<IconPickerModalProps> = ({
         numColumns={6}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => handleSelectIcon(item)}
-            className="w-1/6 p-2"
-          >
-            <View className={`items-center p-2 rounded ${
-              item === selectedIcon ? 'bg-gray-200' : ''
-            }`}>
+          <TouchableOpacity onPress={() => handleSelectIcon(item)} className="w-1/6 p-2">
+            <View
+              className={`items-center p-2 rounded ${item === selectedIcon ? 'bg-gray-200' : ''}`}
+            >
               <IconComponent icon={item} size={40} />
             </View>
           </TouchableOpacity>

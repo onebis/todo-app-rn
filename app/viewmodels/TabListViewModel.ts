@@ -3,11 +3,11 @@
  * タブリストの状態とビジネスロジックを管理
  */
 
-import { useState, useCallback } from 'react';
-import { TabState, TabListState } from '../types';
-import { TabRepository, TaskRepository } from '../repositories';
-import { tabEntitiesToStates } from '../utils';
+import { useCallback, useState } from 'react';
 import { DEFAULT_TAB_ID } from '../constants/app';
+import { TabRepository, TaskRepository } from '../repositories';
+import { type TabListState, TabState } from '../types';
+import { tabEntitiesToStates } from '../utils';
 
 export const useTabListViewModel = () => {
   const [state, setState] = useState<TabListState>({
@@ -58,94 +58,94 @@ export const useTabListViewModel = () => {
   /**
    * 新しいタブを作成
    */
-  const createTab = useCallback(async (
-    title: string,
-    color: string,
-    icon: string
-  ): Promise<number> => {
-    try {
-      const newTabId = await TabRepository.createTab(title, color, icon);
-      await fetchAllTabs();
-      return newTabId;
-    } catch (error) {
-      console.error('Failed to create tab:', error);
-      setState((prev) => ({
-        ...prev,
-        error: 'タブの作成に失敗しました',
-      }));
-      throw error;
-    }
-  }, [fetchAllTabs]);
+  const createTab = useCallback(
+    async (title: string, color: string, icon: string): Promise<number> => {
+      try {
+        const newTabId = await TabRepository.createTab(title, color, icon);
+        await fetchAllTabs();
+        return newTabId;
+      } catch (error) {
+        console.error('Failed to create tab:', error);
+        setState((prev) => ({
+          ...prev,
+          error: 'タブの作成に失敗しました',
+        }));
+        throw error;
+      }
+    },
+    [fetchAllTabs]
+  );
 
   /**
    * タブを更新
    */
-  const updateTab = useCallback(async (
-    tabId: number,
-    title: string,
-    color: string,
-    icon: string
-  ) => {
-    try {
-      await TabRepository.updateTab(tabId, title, color, icon);
-      await fetchAllTabs();
-    } catch (error) {
-      console.error('Failed to update tab:', error);
-      setState((prev) => ({
-        ...prev,
-        error: 'タブの更新に失敗しました',
-      }));
-    }
-  }, [fetchAllTabs]);
+  const updateTab = useCallback(
+    async (tabId: number, title: string, color: string, icon: string) => {
+      try {
+        await TabRepository.updateTab(tabId, title, color, icon);
+        await fetchAllTabs();
+      } catch (error) {
+        console.error('Failed to update tab:', error);
+        setState((prev) => ({
+          ...prev,
+          error: 'タブの更新に失敗しました',
+        }));
+      }
+    },
+    [fetchAllTabs]
+  );
 
   /**
    * タブを削除（カスケード削除）
    */
-  const deleteTab = useCallback(async (
-    tabId: number,
-    onTabDeleted: (newActiveTabId: number) => void
-  ) => {
-    try {
-      // タブに含まれるすべてのタスクを削除
-      await TaskRepository.deleteTasksByTabId(tabId);
+  const deleteTab = useCallback(
+    async (tabId: number, onTabDeleted: (newActiveTabId: number) => void) => {
+      try {
+        // タブに含まれるすべてのタスクを削除
+        await TaskRepository.deleteTasksByTabId(tabId);
 
-      // タブを削除
-      await TabRepository.deleteTab(tabId);
+        // タブを削除
+        await TabRepository.deleteTab(tabId);
 
-      // タブリストを再取得
-      await fetchAllTabs();
+        // タブリストを再取得
+        await fetchAllTabs();
 
-      // 削除後、最初のタブをアクティブにする
-      const tabs = await TabRepository.getAllTabs();
-      if (tabs.length > 0) {
-        onTabDeleted(tabs[0].id);
-      } else {
-        onTabDeleted(DEFAULT_TAB_ID);
+        // 削除後、最初のタブをアクティブにする
+        const tabs = await TabRepository.getAllTabs();
+        if (tabs.length > 0) {
+          onTabDeleted(tabs[0].id);
+        } else {
+          onTabDeleted(DEFAULT_TAB_ID);
+        }
+      } catch (error) {
+        console.error('Failed to delete tab:', error);
+        setState((prev) => ({
+          ...prev,
+          error: 'タブの削除に失敗しました',
+        }));
       }
-    } catch (error) {
-      console.error('Failed to delete tab:', error);
-      setState((prev) => ({
-        ...prev,
-        error: 'タブの削除に失敗しました',
-      }));
-    }
-  }, [fetchAllTabs]);
+    },
+    [fetchAllTabs]
+  );
 
   /**
    * タブの並び順を変更
    */
-  const reorderTabs = useCallback(async (oldIndex: number, newIndex: number) => {
-    try {
-      await TabRepository.reorderTabs(oldIndex, newIndex);
-      await fetchAllTabs();
-    } catch (error) {
-      console.error('Failed to reorder tabs:', error);
-      setState((prev) => ({
-        ...prev,
-        error: 'タブの並び替えに失敗しました',
-      }));
-    }
-  }, [fetchAllTabs]);
+  const reorderTabs = useCallback(
+    async (oldIndex: number, newIndex: number) => {
+      try {
+        await TabRepository.reorderTabs(oldIndex, newIndex);
+        await fetchAllTabs();
+      } catch (error) {
+        console.error('Failed to reorder tabs:', error);
+        setState((prev) => ({
+          ...prev,
+          error: 'タブの並び替えに失敗しました',
+        }));
+      }
+    },
+    [fetchAllTabs]
+  );
 
   return {
     state,

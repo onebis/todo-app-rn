@@ -3,18 +3,12 @@
  * タブ一覧・管理画面
  */
 
-import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Alert,
-} from 'react-native';
+import type React from 'react';
+import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAppContext } from '../contexts';
 import { ColorIndicator, IconComponent } from '../components/common';
 import { DELETE_TAB_ID, SHADOW } from '../constants';
+import { useAppContext } from '../contexts';
 
 interface TabListScreenProps {
   onClose: () => void;
@@ -58,15 +52,10 @@ export const TabListScreen: React.FC<TabListScreenProps> = ({
     <SafeAreaView className="flex-1 bg-app-background">
       {/* ヘッダー */}
       <View className="h-[60px] flex-row items-center px-md bg-white">
-        <TouchableOpacity
-          onPress={onClose}
-          className="w-10 h-10 justify-center items-center"
-        >
+        <TouchableOpacity onPress={onClose} className="w-10 h-10 justify-center items-center">
           <Text className="text-2xl text-black">✕</Text>
         </TouchableOpacity>
-        <Text className="flex-1 text-xl font-bold text-black text-center mr-10">
-          タブ一覧
-        </Text>
+        <Text className="flex-1 text-xl font-bold text-black text-center mr-10">タブ一覧</Text>
       </View>
 
       {/* タブリスト */}

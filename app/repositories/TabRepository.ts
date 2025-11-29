@@ -3,10 +3,10 @@
  * タブのデータアクセス層
  */
 
-import { TabEntity } from '../types';
-import { Storage } from './storage';
+import { DEFAULT_TABS, DELETE_TAB_ID } from '../constants/app';
+import type { TabEntity } from '../types';
 import { getCurrentTimestamp } from '../utils';
-import { DELETE_TAB_ID, DEFAULT_TABS } from '../constants/app';
+import { Storage } from './storage';
 
 const TABS_STORAGE_KEY = 'tabs';
 
@@ -30,7 +30,7 @@ export class TabRepository {
    * @returns TabEntity、存在しない場合はnull
    */
   static async getTabById(tabId: number): Promise<TabEntity | null> {
-    const allTabs = await this.getAllTabs();
+    const allTabs = await TabRepository.getAllTabs();
     return allTabs.find((tab) => tab.id === tabId) || null;
   }
 
@@ -39,7 +39,7 @@ export class TabRepository {
    * @returns タブが1つ以上存在する場合true
    */
   static async hasAnyTabs(): Promise<boolean> {
-    const tabs = await this.getAllTabs();
+    const tabs = await TabRepository.getAllTabs();
     return tabs.length > 0;
   }
 
@@ -48,7 +48,7 @@ export class TabRepository {
    * 初回起動時にデフォルトのタブを作成
    */
   static async initializeDefaultTabs(): Promise<void> {
-    const hasAny = await this.hasAnyTabs();
+    const hasAny = await TabRepository.hasAnyTabs();
     if (hasAny) {
       return; // すでにタブが存在する場合は何もしない
     }
@@ -72,17 +72,11 @@ export class TabRepository {
    * @param icon - アイコン
    * @returns 作成されたタブのID
    */
-  static async createTab(
-    title: string,
-    color: string,
-    icon: string
-  ): Promise<number> {
-    const allTabs = await this.getAllTabs();
+  static async createTab(title: string, color: string, icon: string): Promise<number> {
+    const allTabs = await TabRepository.getAllTabs();
 
     // 新しいIDを生成（最大ID + 1）
-    const newId = allTabs.length > 0
-      ? Math.max(...allTabs.map((t) => t.id)) + 1
-      : 2; // ID 0, 1 はデフォルトタブで使用
+    const newId = allTabs.length > 0 ? Math.max(...allTabs.map((t) => t.id)) + 1 : 2; // ID 0, 1 はデフォルトタブで使用
 
     const newTab: TabEntity = {
       id: newId,
@@ -112,13 +106,8 @@ export class TabRepository {
    * @param color - 新しいカラー
    * @param icon - 新しいアイコン
    */
-  static async updateTab(
-    tabId: number,
-    title: string,
-    color: string,
-    icon: string
-  ): Promise<void> {
-    const allTabs = await this.getAllTabs();
+  static async updateTab(tabId: number, title: string, color: string, icon: string): Promise<void> {
+    const allTabs = await TabRepository.getAllTabs();
     const tabIndex = allTabs.findIndex((tab) => tab.id === tabId);
 
     if (tabIndex === -1) {
@@ -141,7 +130,7 @@ export class TabRepository {
    * @param newOrder - 新しい順序
    */
   static async updateTabOrder(tabId: number, newOrder: number): Promise<void> {
-    const allTabs = await this.getAllTabs();
+    const allTabs = await TabRepository.getAllTabs();
     const tabIndex = allTabs.findIndex((tab) => tab.id === tabId);
 
     if (tabIndex === -1) {
@@ -166,7 +155,7 @@ export class TabRepository {
       throw new Error('Cannot delete the DELETE tab');
     }
 
-    const allTabs = await this.getAllTabs();
+    const allTabs = await TabRepository.getAllTabs();
     const filteredTabs = allTabs.filter((tab) => tab.id !== tabId);
 
     // order を正規化（0, 1, 2, ...）
@@ -184,7 +173,7 @@ export class TabRepository {
    * @param newIndex - 新しいインデックス
    */
   static async reorderTabs(oldIndex: number, newIndex: number): Promise<void> {
-    const allTabs = await this.getAllTabs();
+    const allTabs = await TabRepository.getAllTabs();
 
     if (oldIndex < 0 || oldIndex >= allTabs.length) {
       throw new Error(`Invalid oldIndex: ${oldIndex}`);

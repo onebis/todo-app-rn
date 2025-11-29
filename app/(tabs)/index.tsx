@@ -3,7 +3,7 @@
  */
 
 import React, { useState } from 'react';
-import { MainScreen, EditTabScreen, TabListScreen } from '../screens';
+import { EditTabScreen, MainScreen, TabListScreen } from '../screens';
 
 type Screen = 'main' | 'tabList' | 'createTab' | 'editTab';
 
@@ -24,9 +24,7 @@ export default function HomeScreen() {
 
   return (
     <>
-      {currentScreen === 'main' && (
-        <MainScreen onNavigateToTabList={navigateToTabList} />
-      )}
+      {currentScreen === 'main' && <MainScreen onNavigateToTabList={navigateToTabList} />}
 
       {currentScreen === 'tabList' && (
         <TabListScreen
@@ -37,10 +35,7 @@ export default function HomeScreen() {
       )}
 
       {currentScreen === 'createTab' && (
-        <EditTabScreen
-          mode="create"
-          onClose={() => setCurrentScreen('tabList')}
-        />
+        <EditTabScreen mode="create" onClose={() => setCurrentScreen('tabList')} />
       )}
 
       {currentScreen === 'editTab' && editingTabId !== undefined && (

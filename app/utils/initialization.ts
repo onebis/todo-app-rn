@@ -2,8 +2,8 @@
  * アプリケーション初期化ユーティリティ
  */
 
-import { TabRepository } from '../repositories';
 import { DEFAULT_TAB_ID } from '../constants/app';
+import { TabRepository } from '../repositories';
 
 /**
  * アプリケーションの初期化

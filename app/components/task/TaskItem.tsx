@@ -3,9 +3,10 @@
  * 個別のタスクを表示・編集するコンポーネント
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { TaskState } from '../../types';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import type { TaskState } from '../../types';
 
 interface TaskItemProps {
   task: TaskState;
@@ -49,9 +50,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         onPress={() => onToggleDone(task.id)}
         className="w-[30px] h-[30px] justify-center items-center mr-sm"
       >
-        <Text className="text-2xl text-blue-500">
-          {task.done ? '☑' : '☐'}
-        </Text>
+        <Text className="text-2xl text-blue-500">{task.done ? '☑' : '☐'}</Text>
       </TouchableOpacity>
 
       {/* タスク件名 */}
@@ -66,10 +65,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             placeholder="タスクを入力..."
           />
         ) : (
-          <TouchableOpacity
-            onPress={() => onStartEdit(task.id)}
-            className="py-[5px]"
-          >
+          <TouchableOpacity onPress={() => onStartEdit(task.id)} className="py-[5px]">
             <Text
               className={`text-body-large ${task.done ? 'text-task-done line-through' : 'text-black'}`}
               numberOfLines={1}

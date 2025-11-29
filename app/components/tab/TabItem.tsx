@@ -3,10 +3,10 @@
  * 個別のタブを表示するコンポーネント
  */
 
-import React from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
-import { TabState } from '../../types';
-import { IconComponent, ColorIndicator } from '../common';
+import type React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import type { TabState } from '../../types';
+import { ColorIndicator, IconComponent } from '../common';
 
 interface TabItemProps {
   tab: TabState;
@@ -14,11 +14,7 @@ interface TabItemProps {
   onPress: (tabId: number) => void;
 }
 
-export const TabItem: React.FC<TabItemProps> = ({
-  tab,
-  isActive,
-  onPress,
-}) => {
+export const TabItem: React.FC<TabItemProps> = ({ tab, isActive, onPress }) => {
   return (
     <TouchableOpacity
       onPress={() => onPress(tab.id)}

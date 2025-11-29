@@ -3,9 +3,9 @@
  * タブのカラーを表示するコンポーネント
  */
 
-import React from 'react';
+import type React from 'react';
 import { View } from 'react-native';
-import { ColorType } from '../../constants/app';
+import type { ColorType } from '../../constants/app';
 
 interface ColorIndicatorProps {
   color: ColorType;

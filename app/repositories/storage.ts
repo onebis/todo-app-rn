@@ -4,7 +4,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { isTaskEntityArray, isTabEntityArray } from '../types/guards';
+import { isTabEntityArray, isTaskEntityArray } from '../types/guards';
 
 export class Storage {
   /**

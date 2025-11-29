@@ -3,8 +3,9 @@
  * エラーキャッチ用の境界コンポーネント
  */
 
-import React, { Component, ReactNode } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import type React from 'react';
+import { Component, type ReactNode } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -37,23 +38,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (this.state.hasError) {
       return (
         <View className="flex-1 justify-center items-center bg-app-background p-lg">
-          <Text className="text-xl font-bold text-black mb-4">
-            エラーが発生しました
-          </Text>
+          <Text className="text-xl font-bold text-black mb-4">エラーが発生しました</Text>
           <Text className="text-body-medium text-gray-600 mb-8 text-center">
             申し訳ございません。予期しないエラーが発生しました。
           </Text>
           {__DEV__ && this.state.error && (
             <View className="bg-red-100 p-4 rounded mb-4 w-full">
-              <Text className="text-sm text-red-800">
-                {this.state.error.toString()}
-              </Text>
+              <Text className="text-sm text-red-800">{this.state.error.toString()}</Text>
             </View>
           )}
-          <TouchableOpacity
-            onPress={this.handleReset}
-            className="bg-blue-500 px-8 py-3 rounded"
-          >
+          <TouchableOpacity onPress={this.handleReset} className="bg-blue-500 px-8 py-3 rounded">
             <Text className="text-white font-medium">再試行</Text>
           </TouchableOpacity>
         </View>

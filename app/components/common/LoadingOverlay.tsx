@@ -3,8 +3,8 @@
  * ローディングオーバーレイコンポーネント
  */
 
-import React from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import type React from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 interface LoadingOverlayProps {
   visible: boolean;

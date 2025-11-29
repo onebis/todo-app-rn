@@ -3,8 +3,8 @@
  * タブ編集画面の状態とビジネスロジックを管理
  */
 
-import { useState, useCallback } from 'react';
-import { EditTabState } from '../types';
+import { useCallback, useState } from 'react';
+import type { EditTabState } from '../types';
 
 const INITIAL_STATE: EditTabState = {
   editTabId: null,
@@ -31,19 +31,17 @@ export const useEditTabStateViewModel = () => {
   /**
    * 編集モードで初期化
    */
-  const initializeForEdit = useCallback((
-    tabId: number,
-    title: string,
-    color: string,
-    icon: string
-  ) => {
-    setState({
-      editTabId: tabId,
-      editTabTitle: title,
-      editTabColor: color,
-      editTabIcon: icon,
-    });
-  }, []);
+  const initializeForEdit = useCallback(
+    (tabId: number, title: string, color: string, icon: string) => {
+      setState({
+        editTabId: tabId,
+        editTabTitle: title,
+        editTabColor: color,
+        editTabIcon: icon,
+      });
+    },
+    []
+  );
 
   /**
    * タブタイトルを更新
