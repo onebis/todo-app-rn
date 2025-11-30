@@ -5,8 +5,18 @@
 
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import type { TaskState } from '../../types';
+
+import ScrollView = Animated.ScrollView;
 
 interface TaskItemProps {
   task: TaskState;
@@ -57,12 +67,17 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       <View className="flex-1">
         {isEditing ? (
           <TextInput
-            className="text-body-large text-black border border-blue-500 rounded p-[5px]"
+            className="text-body-large text-black p-[5px]"
+            style={{
+              borderWidth: 0,
+              outline: 'none',
+            }}
             value={localSubject}
             onChangeText={handleSubjectChange}
             onSubmitEditing={handleSubmit}
             autoFocus
             placeholder="タスクを入力..."
+            underlineColorAndroid="transparent"
           />
         ) : (
           <TouchableOpacity onPress={() => onStartEdit(task.id)} className="py-[5px]">

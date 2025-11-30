@@ -6,12 +6,19 @@
 import { useNavigation } from '@react-navigation/native';
 import type React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Snackbar } from '@/app/components/common';
 import { TabList } from '@/app/components/tab';
 import { TaskList } from '@/app/components/task';
-import { DELETE_TAB_ID, SHADOW, SUCCESS_MESSAGES } from '@/app/constants';
+import { DELETE_TAB_ID, SHADOW } from '@/app/constants';
 import { useAppContext } from '@/app/contexts';
 import { useSnackbar } from '@/app/contexts/SnackbarContext';
 
@@ -25,7 +32,7 @@ export const MainScreen: React.FC = () => {
     navigation.navigate('Settings' as never);
   };
   const { taskList, tabList, appState } = useAppContext();
-  const { showSnackbar, hideSnackbar, snackbarConfig, visible } = useSnackbar();
+  const { hideSnackbar, snackbarConfig, visible } = useSnackbar();
 
   // メモ化された値
   const isDeleteTab = useMemo(
@@ -34,6 +41,7 @@ export const MainScreen: React.FC = () => {
   );
 
   // 画面初期化
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <初期化時のみ実行したいため>
   useEffect(() => {
     const initialize = async () => {
       await tabList.initializeDefaultTabs();
@@ -45,18 +53,18 @@ export const MainScreen: React.FC = () => {
 
   // タブリストが読み込まれたら最初のタブをアクティブにする
   useEffect(() => {
-    if (tabList.state.tabList.length > 0 && appState.state.activeTabId === 0) {
+    if (tabList.state.tabList.length > 0) {
       const firstTab = tabList.state.tabList[0];
       appState.setActiveTabId(firstTab.id);
+    } else {
+      appState.setActiveTabId(0);
     }
   }, [tabList.state.tabList.length]);
 
   // タブ切り替え時にタスクを再取得
   useEffect(() => {
-    if (appState.state.activeTabId !== 0) {
-      taskList.fetchTasksByTabId(appState.state.activeTabId);
-    }
-  }, [appState.state.activeTabId]);
+    taskList.fetchTasksByTabId(appState.state.activeTabId);
+  }, [appState.state.activeTabId, taskList.fetchTasksByTabId]);
 
   // タスク追加
   const handleAddTask = useCallback(async () => {
@@ -73,57 +81,6 @@ export const MainScreen: React.FC = () => {
     await taskList.deleteAllTasksInTrash();
   }, [taskList]);
 
-  // タスク完了トグル
-  const handleToggleDone = useCallback(
-    async (taskId: number) => {
-      await taskList.toggleTaskDone(taskId, appState.state.activeTabId);
-    },
-    [taskList, appState.state.activeTabId]
-  );
-
-  // タスク編集開始
-  const handleStartEdit = useCallback(
-    (taskId: number) => {
-      appState.setActiveEditId(taskId);
-    },
-    [appState]
-  );
-
-  // タスク件名更新
-  const handleUpdateSubject = useCallback(
-    async (taskId: number, subject: string) => {
-      await taskList.updateTaskSubject(taskId, subject);
-    },
-    [taskList]
-  );
-
-  // タスク編集終了
-  const handleEndEdit = useCallback(async () => {
-    appState.exitEditMode();
-    // 編集終了後にタスクリストを再取得
-    await taskList.fetchTasksByTabId(appState.state.activeTabId);
-  }, [appState, taskList]);
-
-  // タスク削除
-  const handleDeleteTask = useCallback(
-    async (taskId: number) => {
-      const originalTabId = appState.state.activeTabId;
-      await taskList.softDeleteTask(taskId, originalTabId);
-
-      showSnackbar({
-        message: SUCCESS_MESSAGES.TASK_DELETED,
-        action: {
-          label: 'Undo',
-          onPress: async () => {
-            await taskList.undoSoftDelete(taskId, originalTabId, appState.state.activeTabId);
-            hideSnackbar();
-          },
-        },
-      });
-    },
-    [taskList, appState, showSnackbar, hideSnackbar]
-  );
-
   // タブ選択
   const handleTabPress = useCallback(
     (tabId: number) => {
@@ -132,16 +89,16 @@ export const MainScreen: React.FC = () => {
     [appState]
   );
 
-  // ローディング状態
-  if (taskList.state.isLoading || tabList.state.isLoading) {
-    return (
-      <SafeAreaView className="flex-1 bg-app-background">
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#9C27B0" />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  // ローディング状態 TODO: ローディング時にはスケルトンスクリーンや操作できない仕組みを実装する
+  // if (taskList.state.isLoading || tabList.state.isLoading) {
+  //   return (
+  //     <SafeAreaView className="flex-1 bg-app-background">
+  //       <View className="flex-1 justify-center items-center">
+  //         <ActivityIndicator size="large" color="#9C27B0" />
+  //       </View>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   return (
     <SafeAreaView className="flex-1 bg-app-background">
@@ -157,27 +114,25 @@ export const MainScreen: React.FC = () => {
       </View>
 
       {/* メインコンテンツ */}
-      <View className="flex-1 flex-row p-sm">
-        {/* タスクリスト */}
-        <View className="flex-1 mr-sm">
-          <TaskList
-            tasks={taskList.state.taskList}
-            activeEditId={appState.state.activeEditId}
-            onToggleDone={handleToggleDone}
-            onStartEdit={handleStartEdit}
-            onUpdateSubject={handleUpdateSubject}
-            onEndEdit={handleEndEdit}
-            onDelete={handleDeleteTask}
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
+        className="flex-1"
+      >
+        <View className="flex-1 flex-row p-sm">
+          {/* タスクリスト */}
+          <View className="flex-1">
+            <TaskList />
+          </View>
+
+          {/* タブリスト */}
+          <TabList
+            tabs={tabList.state.tabList}
+            activeTabId={appState.state.activeTabId}
+            onTabPress={handleTabPress}
           />
         </View>
-
-        {/* タブリスト */}
-        <TabList
-          tabs={tabList.state.tabList}
-          activeTabId={appState.state.activeTabId}
-          onTabPress={handleTabPress}
-        />
-      </View>
+      </KeyboardAvoidingView>
 
       {/* FAB */}
       <TouchableOpacity

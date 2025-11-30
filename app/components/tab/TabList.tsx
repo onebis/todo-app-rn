@@ -34,7 +34,7 @@ export const TabList: React.FC<TabListProps> = ({ tabs, activeTabId, onTabPress 
         removeClippedSubviews={true}
         maxToRenderPerBatch={10}
         windowSize={10}
-        contentContainerStyle={{ padding: 10 }}
+        contentContainerStyle={{ padding: 1 }}
       />
     </View>
   );
