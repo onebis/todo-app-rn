@@ -3,10 +3,19 @@
  * アプリのメイン画面
  */
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import type React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  Image,
+  ImageBackground,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Snackbar } from '@/app/components/common';
 import { TabList } from '@/app/components/tab';
@@ -15,15 +24,16 @@ import { DELETE_TAB_ID, SHADOW, SUCCESS_MESSAGES } from '@/app/constants';
 import { useAppContext } from '@/app/contexts';
 import { useSnackbar } from '@/app/contexts/SnackbarContext';
 
-// interface MainScreenProps {
-//   onNavigateToTabList?: () => void;
-// }
+const BACKGROUND_IMAGE_KEY = '@background_image';
 
 export const MainScreen: React.FC = () => {
   const navigation = useNavigation();
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+
   const onNavigateToTabList = () => {
     navigation.navigate('Settings' as never);
   };
+
   const { taskList, tabList, appState } = useAppContext();
   const { showSnackbar, hideSnackbar, snackbarConfig, visible } = useSnackbar();
 
@@ -32,6 +42,22 @@ export const MainScreen: React.FC = () => {
     () => appState.state.activeTabId === DELETE_TAB_ID,
     [appState.state.activeTabId]
   );
+
+  // 背景画像の読み込み
+  useEffect(() => {
+    const loadBackgroundImage = async () => {
+      try {
+        const savedImage = await AsyncStorage.getItem(BACKGROUND_IMAGE_KEY);
+        if (savedImage) {
+          setBackgroundImage(savedImage);
+        }
+      } catch (error) {
+        console.error('Failed to load background image:', error);
+      }
+    };
+
+    loadBackgroundImage();
+  }, []);
 
   // 画面初期化
   useEffect(() => {
@@ -57,6 +83,59 @@ export const MainScreen: React.FC = () => {
       taskList.fetchTasksByTabId(appState.state.activeTabId);
     }
   }, [appState.state.activeTabId]);
+
+  // 背景画像を選択
+  const handleSelectBackgroundImage = useCallback(async () => {
+    try {
+      // 権限をリクエスト
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== 'granted') {
+        showSnackbar({
+          message: '画像ライブラリへのアクセス権限が必要です',
+        });
+        return;
+      }
+
+      // 画像を選択
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: 'images',
+        allowsEditing: true,
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        const imageUri = result.assets[0].uri;
+        setBackgroundImage(imageUri);
+
+        // AsyncStorageに保存
+        await AsyncStorage.setItem(BACKGROUND_IMAGE_KEY, imageUri);
+
+        showSnackbar({
+          message: '背景画像を設定しました',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to select background image:', error);
+      showSnackbar({
+        message: '画像の選択に失敗しました',
+      });
+    }
+  }, [showSnackbar]);
+
+  // 背景画像を削除
+  const handleRemoveBackgroundImage = useCallback(async () => {
+    try {
+      setBackgroundImage(null);
+      await AsyncStorage.removeItem(BACKGROUND_IMAGE_KEY);
+
+      showSnackbar({
+        message: '背景画像を削除しました',
+      });
+    } catch (error) {
+      console.error('Failed to remove background image:', error);
+    }
+  }, [showSnackbar]);
 
   // タスク追加
   const handleAddTask = useCallback(async () => {
@@ -143,17 +222,38 @@ export const MainScreen: React.FC = () => {
     );
   }
 
-  return (
-    <SafeAreaView className="flex-1 bg-app-background">
+  const mainContent = (
+    <>
       {/* ヘッダー */}
-      <View className="h-[60px] flex-row justify-between items-center px-md bg-white">
+      <View className="h-[60px] flex-row justify-between items-center px-md bg-white/90">
         <Text className="text-xl font-bold text-black">Todo App</Text>
-        <TouchableOpacity
-          className="w-10 h-10 justify-center items-center"
-          onPress={onNavigateToTabList}
-        >
-          <Text className="text-2xl">⚙</Text>
-        </TouchableOpacity>
+        <View className="flex-row gap-2">
+          {/* 背景画像設定ボタン */}
+          <TouchableOpacity
+            className="w-10 h-10 justify-center items-center"
+            onPress={handleSelectBackgroundImage}
+          >
+            <Text className="text-2xl">🖼️</Text>
+          </TouchableOpacity>
+
+          {/* 背景画像削除ボタン */}
+          {backgroundImage && (
+            <TouchableOpacity
+              className="w-10 h-10 justify-center items-center"
+              onPress={handleRemoveBackgroundImage}
+            >
+              <Text className="text-2xl">heres</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* 設定ボタン */}
+          <TouchableOpacity
+            className="w-10 h-10 justify-center items-center"
+            onPress={onNavigateToTabList}
+          >
+            <Text className="text-2xl">⚙</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* メインコンテンツ */}
@@ -196,6 +296,20 @@ export const MainScreen: React.FC = () => {
         onDismiss={hideSnackbar}
         action={snackbarConfig?.action}
       />
+    </>
+  );
+
+  return (
+    <SafeAreaView className="flex-1">
+      <>
+        {backgroundImage ? (
+          <ImageBackground source={{ uri: backgroundImage }} className="flex-1" resizeMode="cover">
+            {mainContent}
+          </ImageBackground>
+        ) : (
+          <View className="flex-1 bg-app-background">{mainContent}</View>
+        )}
+      </>
     </SafeAreaView>
   );
 };

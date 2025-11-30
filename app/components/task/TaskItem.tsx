@@ -44,7 +44,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   };
 
   return (
-    <View className="flex-row items-center p-sm bg-white border-b border-border-bottom">
+    <View className="flex-row items-center p-sm border-b border-border-bottom">
       {/* チェックボックス */}
       <TouchableOpacity
         onPress={() => onToggleDone(task.id)}

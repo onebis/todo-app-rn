@@ -47,7 +47,7 @@ export const TaskList: React.FC<TaskListProps> = ({
 
   if (tasks.length === 0) {
     return (
-      <View className="flex-1 justify-center items-center bg-main-list-bg rounded-task-list">
+      <View className="flex-1 justify-center items-center bg-amber-300 rounded-task-list">
         <Text className="text-body-large text-disabled">タスクがありません</Text>
       </View>
     );
@@ -61,7 +61,7 @@ export const TaskList: React.FC<TaskListProps> = ({
       removeClippedSubviews={true}
       maxToRenderPerBatch={10}
       windowSize={10}
-      className="flex-1 bg-main-list-bg rounded-task-list"
+      className="flex-1 bg-main-list-bg opacity-70 rounded-task-list"
     />
   );
 };
